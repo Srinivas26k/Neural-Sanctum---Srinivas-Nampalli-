@@ -1,13 +1,13 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { Loader } from './components/Loader';
 import { CustomCursor } from './components/CustomCursor';
+import { Navbar } from './components/Navbar';
 import { SectionHero } from './components/SectionHero';
-import { SectionProcess } from './components/SectionProcess';
+import { SectionServices } from './components/SectionServices';
 import { SectionSelectedWorks } from './components/SectionSelectedWorks';
-import { SectionNetwork } from './components/SectionNetwork';
-import { SectionEngagement } from './components/SectionEngagement';
-import { SectionKnowledge } from './components/SectionKnowledge';
-import { Footer } from './components/Footer';
+import { SectionTrust } from './components/SectionTrust';
+import { SectionContact } from './components/SectionContact';
+import { SectionKnowledge } from './components/SectionKnowledge'; // Keeping Signals/Knowledge
 import { Volume2, VolumeX } from 'lucide-react';
 
 function App() {
@@ -15,12 +15,11 @@ function App() {
   const [muted, setMuted] = useState(true);
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  // Handle audio toggle
   const toggleAudio = () => {
     if (audioRef.current) {
         if (muted) {
             audioRef.current.play().catch(e => console.log("Audio autoplay prevented"));
-            audioRef.current.volume = 0.2; // Low ambient hum
+            audioRef.current.volume = 0.15; 
         } else {
             audioRef.current.pause();
         }
@@ -29,19 +28,17 @@ function App() {
   };
 
   return (
-    <div className="bg-obsidian min-h-screen text-offwhite selection:bg-blue selection:text-white">
+    <div className="bg-obsidian min-h-screen text-offwhite selection:bg-blue selection:text-white overflow-x-hidden">
       <CustomCursor />
       
-      {/* Ambient Audio (Brownian Noise / Server Hum) */}
       <audio ref={audioRef} loop>
-         {/* Using a placeholder white noise generator url or file */}
          <source src="https://codeskulptor-demos.commondatastorage.googleapis.com/GalaxyInvaders/theme_01.mp3" type="audio/mpeg" />
       </audio>
 
-      {/* Audio Toggle */}
+      {/* Floating Audio Toggle */}
       <div 
         onClick={toggleAudio}
-        className="fixed bottom-8 left-8 z-50 p-3 border border-offwhite/10 rounded-full cursor-pointer bg-obsidian/80 hover:bg-blue/20 transition-colors"
+        className="fixed bottom-6 left-6 z-50 p-3 border border-white/10 rounded-full cursor-pointer bg-black/60 backdrop-blur-md hover:bg-blue/20 transition-colors"
       >
         {muted ? <VolumeX size={16} className="text-offwhite/50" /> : <Volume2 size={16} className="text-blue" />}
       </div>
@@ -50,13 +47,15 @@ function App() {
         <Loader onComplete={() => setLoading(false)} />
       ) : (
         <main className="opacity-0 animate-[fadeIn_1s_ease-out_forwards]">
+          <Navbar />
           <SectionHero />
-          <SectionProcess />
+          <SectionServices />
+          <SectionTrust />
           <SectionSelectedWorks />
-          <SectionNetwork />
-          <SectionEngagement />
-          <SectionKnowledge />
-          <Footer />
+          <div id="signals">
+             <SectionKnowledge />
+          </div>
+          <SectionContact />
         </main>
       )}
 

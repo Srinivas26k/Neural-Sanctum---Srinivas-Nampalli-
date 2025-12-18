@@ -8,6 +8,10 @@ export const SectionProcess: React.FC = () => {
   });
 
   const x = useTransform(scrollYProgress, [0, 1], ["0%", "-66.66%"]);
+  
+  // "Liquid Wipe" Overlay Control
+  // We simulate a wipe by moving a mask or overlay as scroll progresses
+  const wipeY = useTransform(scrollYProgress, [0, 0.3, 0.35, 0.6, 0.65, 1], ["100%", "100%", "0%", "100%", "0%", "100%"]);
 
   const steps = [
     {
@@ -37,13 +41,28 @@ export const SectionProcess: React.FC = () => {
     <section ref={targetRef} className="relative h-[300vh] bg-slate">
       <div className="sticky top-0 flex h-screen items-center overflow-hidden">
         <motion.div style={{ x }} className="flex gap-0">
-          {steps.map((step) => (
+          {steps.map((step, idx) => (
             <div key={step.id} className="relative h-screen w-screen flex-shrink-0 flex items-center justify-center bg-slate overflow-hidden">
-              {/* Background with wipe effect simulation */}
+              {/* Background Image */}
               <div className="absolute inset-0">
                  <img src={step.img} alt="bg" className="w-full h-full object-cover grayscale opacity-20" />
                  <div className="absolute inset-0 bg-gradient-to-r from-obsidian via-obsidian/80 to-transparent" />
               </div>
+
+              {/* Liquid Data Wipe Overlay (Between slides) */}
+              <motion.div 
+                className="absolute inset-0 z-20 bg-blue/10 backdrop-blur-sm pointer-events-none flex flex-col items-center justify-center"
+                style={{ 
+                    y: wipeY,
+                    opacity: useTransform(wipeY, ["100%", "0%"], [0, 1])
+                }}
+              >
+                  <div className="font-mono text-blue text-opacity-50 text-xs">
+                      {Array.from({length: 20}).map((_, i) => (
+                          <div key={i}>{Math.random().toString(36).substring(2)}</div>
+                      ))}
+                  </div>
+              </motion.div>
               
               <div className="relative z-10 p-12 max-w-5xl w-full flex flex-col md:flex-row items-end gap-12">
                 <div className="flex-1">
@@ -57,15 +76,19 @@ export const SectionProcess: React.FC = () => {
                 </div>
                 
                 {/* Visual Data Decorator */}
-                <div className="hidden md:block w-64 h-64 border border-offwhite/10 relative">
-                    <div className="absolute top-2 left-2 text-[10px] font-mono text-blue">
-                        SYS_MONITOR<br/>
-                        CPU: 34%<br/>
-                        MEM: 12GB
+                <div className="hidden md:block w-64 h-64 border border-offwhite/10 relative bg-black/50 backdrop-blur-sm p-4">
+                    <div className="text-[10px] font-mono text-blue h-full overflow-hidden">
+                        <div>> SYS_MONITOR_PHASE_{step.id}</div>
+                        <div>> CPU: {30 + idx * 20}%</div>
+                        <div>> MEM: {12 + idx * 8}GB</div>
+                        <br/>
+                        <div className="opacity-50">
+                            {Array.from({length: 10}).map((_, i) => (
+                                <div key={i}>0x{Math.random().toString(16).substring(2, 8).toUpperCase()} ... OK</div>
+                            ))}
+                        </div>
                     </div>
                     <div className="absolute bottom-4 right-4 w-full h-[1px] bg-offwhite/20 animate-pulse" />
-                    <div className="absolute bottom-8 right-4 w-2/3 h-[1px] bg-offwhite/20 animate-pulse" />
-                    <div className="absolute bottom-12 right-4 w-1/3 h-[1px] bg-offwhite/20 animate-pulse" />
                 </div>
               </div>
             </div>

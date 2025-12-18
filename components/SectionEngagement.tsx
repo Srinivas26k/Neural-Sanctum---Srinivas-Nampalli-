@@ -40,19 +40,28 @@ export const SectionEngagement: React.FC = () => {
             <motion.div
               key={slot.id}
               className={`
-                aspect-square relative flex flex-col items-center justify-center cursor-pointer bg-obsidian
+                aspect-square relative flex flex-col items-center justify-center cursor-pointer bg-obsidian group
                 ${slot.status === 'locked' ? 'opacity-40 cursor-not-allowed' : 'hover:bg-blue/5'}
               `}
               onClick={() => handleClick(idx, slot.status)}
+              data-cursor-text={slot.status === 'available' ? 'INITIALIZE' : ''}
             >
-              {/* Ripple Effect */}
+              {/* Sonar Ping / Ripple Effect */}
               {activeIndex === idx && (
-                <motion.div 
-                    className="absolute inset-0 border border-blue"
-                    initial={{ opacity: 1, scale: 0.8 }}
-                    animate={{ opacity: 0, scale: 1.5 }}
-                    transition={{ duration: 0.6 }}
-                />
+                <>
+                    <motion.div 
+                        className="absolute inset-0 border border-blue rounded-full"
+                        initial={{ opacity: 1, scale: 0 }}
+                        animate={{ opacity: 0, scale: 2 }}
+                        transition={{ duration: 0.8, ease: "easeOut" }}
+                    />
+                    <motion.div 
+                        className="absolute inset-0 bg-blue/20 rounded-full"
+                        initial={{ opacity: 0.5, scale: 0 }}
+                        animate={{ opacity: 0, scale: 1.5 }}
+                        transition={{ duration: 0.5, ease: "easeOut" }}
+                    />
+                </>
               )}
 
               {slot.status === 'locked' ? (
@@ -62,15 +71,9 @@ export const SectionEngagement: React.FC = () => {
                 </div>
               ) : (
                 <>
-                    <Calendar className="w-4 h-4 text-blue mb-2 opacity-50" />
+                    <Calendar className="w-4 h-4 text-blue mb-2 opacity-50 group-hover:scale-110 transition-transform" />
                     <span className="font-mono text-xs text-offwhite">{slot.date}</span>
                 </>
-              )}
-              
-              {slot.status === 'available' && (
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity bg-blue/90 z-10">
-                    <span className="font-mono text-obsidian font-bold text-[10px] tracking-widest">INITIALIZE</span>
-                </div>
               )}
             </motion.div>
           ))}
